@@ -1,0 +1,101 @@
+import {Button, Card, Label, Select, Spinner, Tabs, TextInput} from "flowbite-react";
+import {FaPlus, FaUser} from "react-icons/fa";
+import {FormEvent, useState} from "react";
+import fetcher from "../http/fetcher";
+
+
+export default function JoinMenu () {
+
+    return (
+        <div className="w-96 rounded-full">
+            <Tabs.Group aria-label="Default tabs" style="fullWidth" className="">
+                <Tabs.Item active icon={FaUser} title={"Join Game"} >
+                    <Card className="bg-neutral-400 h-1/3 border border-black">
+                        <JoinGameForm/>
+                    </Card>
+                </Tabs.Item>
+                <Tabs.Item icon={FaPlus} title={"Create Game"}>
+                    <Card className="bg-neutral-400 h-1/3 border border-black">
+                        <CreateGameForm/>
+                    </Card>
+                </Tabs.Item>
+            </Tabs.Group>
+        </div>
+    )
+}
+
+function JoinGameForm () {
+
+    const [loading, setLoading] = useState(false);
+    const [name, setName] = useState("");
+    const [code, setCode] = useState("");
+
+    function joinGame (event: Event) {
+        event.preventDefault();
+        setLoading(true);
+        console.log(name, code);
+        // TODO join game
+    }
+
+    return (
+        <form className="flex flex-col gap-4">
+            <div>
+                <div className="mb-2 block">
+                    <Label htmlFor="gameCode" value="Game Code"/>
+                    <TextInput id="gameCode" placeholder="XXXXXX" required type="text"
+                               value={code} onChange={e => setCode(e.target.value)}/>
+                </div>
+                <div className="mb-2 block">
+                    <Label htmlFor="name" value="Name"/>
+                    <TextInput id="name" placeholder={"Your name here"} required type="text"
+                               value={name} onChange={e => setName(e.target.value)}/>
+                </div>
+                <div className="mt-4 flex justify-center">
+                    <Button type="submit" className="bg-blue-600 hover:bg-blue-500" onClick={joinGame}>
+                        {loading ? <Spinner/> : <>Join Game</>}
+                    </Button>
+                </div>
+            </div>
+        </form>
+    )
+}
+
+function CreateGameForm() {
+    const [loading, setLoading] = useState(false);
+
+    function createGame(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        setLoading(true)
+        fetcher("/game/create", {
+            method: "POST",
+            body: JSON.stringify({scriptID: "trouble_brewing"})
+        }).then(async r => console.log(await r.json()))
+    }
+
+    return (
+        <form className="flex flex-col gap-4" onSubmit={createGame}>
+            <div>
+                <div className="block">
+                    <Label htmlFor="script" value="Script"/>
+                    <Select id={"script"} disabled className="mt-2">
+                        <option>
+                            Trouble Brewing
+                        </option>
+                        <option>
+                            Sects and Violets
+                        </option>
+                        <option>
+                            Bad Moon Rising
+                        </option>
+                    </Select>
+                </div>
+                <div className="mt-4 flex justify-center">
+                    <Button type="submit" className="bg-green-700 hover:bg-green-500" onClick={createGame}>
+                        {loading ? <Spinner/> : <>Create Game</>}
+                    </Button>
+                </div>
+            </div>
+        </form>
+    )
+
+}
