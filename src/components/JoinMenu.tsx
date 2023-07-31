@@ -33,6 +33,8 @@ function JoinGameForm () {
     const [name, setName] = useState("");
     const [code, setCode] = useState("");
 
+    const navigate = useNavigate()
+
     const setNameAtom = useSetAtom(nameAtom);
     const setCodeAtom = useSetAtom(gameCodeAtom);
 
@@ -42,7 +44,7 @@ function JoinGameForm () {
         console.log(name, code);
         setNameAtom(name)
         setCodeAtom(code)
-        // TODO join game
+        navigate("/game/")
     }
 
     return (

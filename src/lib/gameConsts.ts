@@ -10,3 +10,11 @@ export enum GamePhase {
     POSTVOTE = "POSTVOTE", // Should be used for resolution events regarding the voting, and special roles like Vizier
     POSTDAY = "POSTDAY"
 }
+
+export enum MessageType {
+    MESSAGE           = "MESSAGE",
+    CLIENT_JOIN       = "CLIENT_JOIN",
+    CLIENT_DISCONNECT = "CLIENT_DISCONNECT",
+    ERROR             = "ERROR",
+    GAME_INFO         = "GAME_INFO",
+}

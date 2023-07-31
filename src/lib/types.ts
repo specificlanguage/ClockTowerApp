@@ -1,9 +1,11 @@
+import {GamePhase} from "./gameConsts.ts";
+
 export interface Player {
     name: string;
+    uuid: string;
     imageURL?: string;
     role?: string;
 }
-
 
 export interface PlayerIconProps {
     name: string;
@@ -23,4 +25,13 @@ export interface Role {
     role_name: string
     description: string
     team: number
+}
+
+export interface WebsocketMessage {
+    [id: string]: any
+}
+
+export interface GameState {
+    phase: GamePhase,
+    players: Player[]
 }
