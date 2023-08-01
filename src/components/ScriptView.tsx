@@ -16,7 +16,7 @@ export default function ScriptView() {
     if(isLoading) {
         return (
             <Block id="script-loading" className="bg-neutral-300 h-screen">
-                <div className="m-2">
+                <div className="mx-auto">
                     <Spinner aria-label="Loading script..." />
                 </div>
             </Block>
@@ -56,7 +56,7 @@ export default function ScriptView() {
 
 
     return (
-        <Block id="sidebar" className="px-6 bg-neutral-300 overflow-auto rounded-none">
+        <Block id="sidebar" className="px-6 bg-neutral-300 overflow-y-auto rounded-none">
             <h2 className="mt-4 text-3xl">Trouble Brewing</h2>
             <hr className="border-black"/>
             <div className={"italic font-lato"} >

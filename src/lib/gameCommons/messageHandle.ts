@@ -11,7 +11,8 @@ export function updatePlayers(message: WebsocketMessage) {
     const players: Player[] = [];
     for(const uuidKey in message.players){
         const player = message.players[uuidKey]
-        players.push({name: player.name, uuid: player.uuid})
+        players.push({name: player.name, uuid: player.uuid,
+            ...(player.isStoryteller && {isStoryteller: player.isStoryteller} )})
     }
     return {
         players
@@ -25,7 +26,8 @@ export function updatePlayers(message: WebsocketMessage) {
  */
 export function getAndAddPlayer(message: WebsocketMessage, players: Player[]){
     const newPlayers = [...players]
-    newPlayers.push({name: message.name, uuid: message.uuid})
+    newPlayers.push({name: message.name, uuid: message.uuid,
+            ...(message.isStoryteller && {isStoryteller: message.isStoryteller})})
     return newPlayers;
 }
 

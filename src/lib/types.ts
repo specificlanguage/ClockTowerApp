@@ -5,6 +5,7 @@ export interface Player {
     uuid: string;
     imageURL?: string;
     role?: string;
+    isStoryteller?: boolean
 }
 
 export interface PlayerIconProps {
