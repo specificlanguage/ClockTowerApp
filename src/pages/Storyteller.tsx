@@ -22,14 +22,15 @@ export default function Storyteller () {
     const {lastMessage, } = useWebSocket(socketURL)
 
     useEffect(() => {
+        if(!loaded) {
+            setLoaded(true);
+            setGameState({
+                ...gameState,
+                phase: GamePhase.GAME_LOBBY
+            })
+        }
+
         if(lastMessage !== null){
-            if(!loaded) {
-                setLoaded(true);
-                setGameState({
-                    ...gameState,
-                    phase: GamePhase.GAME_LOBBY
-                })
-            }
 
             const parsedMsg = JSON.parse(lastMessage.data);
             console.log(typeof  parsedMsg, parsedMsg)
@@ -61,8 +62,8 @@ export default function Storyteller () {
             <ScriptView/>
             <div className="grid gap-4 grid-rows-2 grid-cols-1">
                 <div className="bg-white">
+                    <p className="align-middle">Code: {gameID}</p>
                     {gameState.phase}
-                    Code: {gameID}
                 </div>
                 <PlayerList players={gameState.players}/>
             </div>
