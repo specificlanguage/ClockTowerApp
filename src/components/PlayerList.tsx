@@ -11,10 +11,11 @@ import Default from "../assets/default.jpg";
 export default function PlayerList ({players}: PlayerListProps) {
 
     return (
-        <div id="playerlist" className="space-y-2 border border-neutral-500 rounded-2xl bg-amber-100 overflow-auto">
-            <h3 className="px-5 py-2">
+        <div id="playerlist" className="space-y-2 p-4 border border-neutral-500 rounded-2xl bg-amber-100">
+            <h3 className="px-5">
                 Players ({players.length}/16)
             </h3>
+            <div className="overflow-auto">
             {players.map((player) => {
                 return (
                     <div key={player.name} className="m-2 p-2 border border-black rounded-2xl mx-2 bg-neutral-50 h-[80px]">
@@ -27,6 +28,7 @@ export default function PlayerList ({players}: PlayerListProps) {
                         </div>
                     </div>)
             })}
+            </div>
         </div>
     )
 }

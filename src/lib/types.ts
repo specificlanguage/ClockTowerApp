@@ -35,4 +35,6 @@ export interface WebsocketMessage {
 export interface GameState {
     phase: GamePhase,
     players: Player[]
+    code: string,
+    script: string,
 }
