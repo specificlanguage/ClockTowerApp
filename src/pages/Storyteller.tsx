@@ -1,6 +1,6 @@
 import {useAtom} from "jotai";
 import {gameCodeAtom, nameAtom} from "../stores/atom.ts";
-import ScriptView from "../components/ScriptView.tsx";
+// import ScriptView from "../components/ScriptView.tsx";
 import {useEffect, useState} from "react";
 import useWebSocket from "react-use-websocket";
 import PlayerList from "../components/PlayerList.tsx";
@@ -9,6 +9,7 @@ import {getAndAddPlayer, removePlayer, updatePlayers} from "../lib/gameCommons/m
 import {GameState} from "../lib/types.ts";
 import LobbyInfo from "../components/LobbyInfo.tsx";
 import {useNavigate} from "react-router-dom";
+import RoleSelect from "../components/RoleSelect.tsx";
 
 
 export default function Storyteller () {
@@ -22,7 +23,8 @@ export default function Storyteller () {
         phase: GamePhase.LOADING,
         players: [],
         code: gameID,
-        script: "Trouble Brewing"
+        script: "Trouble Brewing",
+        maxPlayers: 16
     });
     const [loaded, setLoaded] = useState(false);
     const [messageHistory, setMessageHistory] = useState<string[]>([]);
@@ -31,11 +33,11 @@ export default function Storyteller () {
 
     const navigate = useNavigate();
 
-    useEffect(() => {
+    if(gameID == "" || name == "" || localStorage.getItem("uuid") == null){
+        navigate("/")
+    }
 
-        if(gameID == "" || name == "" || localStorage.getItem("uuid") == null){
-            navigate("/")
-        }
+    useEffect(() => {
 
         if(!loaded) {
             setLoaded(true);
@@ -48,7 +50,6 @@ export default function Storyteller () {
         if(lastMessage !== null){
             const parsedMsg = JSON.parse(lastMessage.data);
             setMessageHistory((prevState) => prevState.concat(lastMessage.data))
-            console.log(typeof  parsedMsg, parsedMsg)
 
             if(parsedMsg.type == MessageType.GAME_INFO){
                 const players = updatePlayers(parsedMsg.message);
@@ -70,11 +71,11 @@ export default function Storyteller () {
                 })
             }
         }
-    }, [gameID, gameState, lastMessage, loaded, name, navigate]);
+    }, [lastMessage]);
 
     return (
         <div className="grid gap-4 grid-cols-2 grid-rows-1 h-full">
-            <ScriptView/>
+            <RoleSelect maxPlayers={gameState.maxPlayers}/>
             <div className="grid gap-4 grid-rows-2 grid-cols-1">
                 <LobbyInfo messageHistory={messageHistory} gameState={gameState}/>
                 <PlayerList players={gameState.players}/>

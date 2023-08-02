@@ -1,5 +1,13 @@
 import {GamePhase} from "./gameConsts.ts";
 
+export enum RoleType {
+    TOWNSFOLK,
+    OUTSIDER,
+    MINION,
+    DEMON,
+    TRAVELER
+}
+
 export interface Player {
     name: string;
     uuid: string;
@@ -37,4 +45,5 @@ export interface GameState {
     players: Player[]
     code: string,
     script: string,
+    maxPlayers: number,
 }

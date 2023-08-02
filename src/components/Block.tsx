@@ -1,6 +1,6 @@
 interface BlockProps {
     children: any
-    className: string
+    className?: string
     id: string
 }
 

@@ -15,7 +15,7 @@ export default function ScriptView() {
 
     if(isLoading) {
         return (
-            <Block id="script-loading" className="bg-neutral-300 h-screen">
+            <Block id="script-loading" className="bg-neutral-300">
                 <div className="mx-auto">
                     <Spinner aria-label="Loading script..." />
                 </div>
