@@ -1,12 +1,10 @@
 import {useAtom} from "jotai";
-import {gameCodeAtom, nameAtom} from "../stores/atom.ts";
-// import ScriptView from "../components/ScriptView.tsx";
+import {gameCodeAtom, gameStateAtom, nameAtom} from "../stores/atom.ts";
 import {useEffect, useState} from "react";
 import useWebSocket from "react-use-websocket";
 import PlayerList from "../components/PlayerList.tsx";
 import {GamePhase, MessageType} from "../lib/gameConsts.ts";
 import {getAndAddPlayer, removePlayer, updatePlayers} from "../lib/gameCommons/messageHandle.ts";
-import {GameState} from "../lib/types.ts";
 import LobbyInfo from "../components/LobbyInfo.tsx";
 import {useNavigate} from "react-router-dom";
 import RoleSelect from "../components/RoleSelect.tsx";
@@ -16,16 +14,9 @@ export default function Storyteller () {
 
     const [gameID] = useAtom(gameCodeAtom);
     const [name] = useAtom(nameAtom);
+    const [gameState, setGameState] = useAtom(gameStateAtom);
     const SOCKET_URL =`${import.meta.env.VITE_WEBSOCKET_URL}/game/${gameID}?name=${name}&uuid=${localStorage.getItem("uuid")}`
 
-
-    const [gameState, setGameState] = useState<GameState>({
-        phase: GamePhase.LOADING,
-        players: [],
-        code: gameID,
-        script: "Trouble Brewing",
-        maxPlayers: 16
-    });
     const [loaded, setLoaded] = useState(false);
     const [messageHistory, setMessageHistory] = useState<string[]>([]);
 
@@ -43,6 +34,7 @@ export default function Storyteller () {
             setLoaded(true);
             setGameState({
                 ...gameState,
+                code: gameID,
                 phase: GamePhase.GAME_LOBBY
             })
         }
