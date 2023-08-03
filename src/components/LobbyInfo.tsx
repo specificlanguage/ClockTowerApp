@@ -3,21 +3,25 @@ import {useState} from "react";
 import {Button, Label, Modal, Select} from "flowbite-react";
 import {getStorytellerInfo} from "../lib/gameCommons/gameAndPlayerUtilities.ts";
 import {range} from "flowbite-react/lib/esm/helpers/range";
+import {useAtom} from "jotai";
+import {gameStateAtom} from "../stores/atom.ts";
 
 export interface LobbyInfoProps {
     messageHistory: string[],
     gameState: GameState,
 }
 
-export default function LobbyInfo({messageHistory, gameState}: LobbyInfoProps) {
+export default function LobbyInfo({messageHistory}: LobbyInfoProps) {
 
+    const [gameState, setGameState] = useAtom(gameStateAtom);
     const [openModal, setOpenModal] = useState(false);
-    const [numPlayers, setNumPlayers] = useState(16);
+    const [numPlayers, setNumPlayers] = useState(gameState.maxPlayers);
 
     const storyteller = getStorytellerInfo(gameState)
 
     function numPlayerChange (event: { target: { value: string; }; }) {
         setNumPlayers(parseInt(event.target.value))
+        setGameState({...gameState, maxPlayers: parseInt(event.target.value)})
     }
 
     return (
@@ -30,8 +34,8 @@ export default function LobbyInfo({messageHistory, gameState}: LobbyInfoProps) {
                 <h5 className="mt-5">Join with code: {gameState.code}</h5>
                 <div className="mt-2">
                     <Label htmlFor="numPlayers" value="Number of Players"/>
-                    <Select id="numplayers" className="w-24" value={numPlayers} onChange={numPlayerChange}>
-                        {range(5, 16).map((n) => (
+                    <Select id="numplayers" className="w-20" value={numPlayers} onChange={numPlayerChange}>
+                        {range(Math.max(gameState.players.length, 5), 16).map((n) => (
                             <option value={n}>{n}</option>
                         ))}
                     </Select>

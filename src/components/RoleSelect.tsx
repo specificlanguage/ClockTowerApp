@@ -2,12 +2,10 @@ import Block from "./Block.tsx";
 import useSWRImmutable from "swr/immutable";
 import fetcher from "../http/fetcher.ts";
 import {separateRoles} from "../lib/gameCommons/gameAndPlayerUtilities.ts";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Role} from "../lib/types.ts";
-
-interface RoleSelectProps {
-    maxPlayers: number
-}
+import {useAtom} from "jotai";
+import {gameStateAtom} from "../stores/atom.ts";
 
 interface SelectRoleButtonProps {
     role: Role,
@@ -34,12 +32,19 @@ export function SelectRoleButton({role, handleClick, selected}: SelectRoleButton
     )
 }
 
-export default function RoleSelect ({maxPlayers}: RoleSelectProps) {
+export default function RoleSelect () {
 
     const { data, error, isLoading } = useSWRImmutable('/script?scriptID=trouble_brewing', fetcher)
     const [roles, setRoles] = useState<Role[]>(
         []
     )
+    const [gameState] = useAtom(gameStateAtom);
+
+    useEffect(() => {
+        let newRoles = roles;
+        newRoles = newRoles.slice(0, gameState.maxPlayers);
+        setRoles(newRoles)
+    }, [gameState]);
 
     if(isLoading){
         return (
@@ -55,7 +60,6 @@ export default function RoleSelect ({maxPlayers}: RoleSelectProps) {
         )
     }
 
-
     function handleButton(role: Role) {
         let newRoles = roles;
 
@@ -65,19 +69,19 @@ export default function RoleSelect ({maxPlayers}: RoleSelectProps) {
             newRoles = newRoles.filter((r) => r.role_name !== role.role_name);
         } else {
             newRoles = newRoles.concat(role)
-            if (newRoles.length >= maxPlayers) {
-                newRoles = newRoles.slice(-maxPlayers)
+            if (newRoles.length >= gameState.maxPlayers) {
+                newRoles = newRoles.slice(-gameState.maxPlayers)
             }
         }
 
-        console.log(newRoles)
+        // console.log(newRoles)
         setRoles(newRoles)
     }
 
     const roleList = separateRoles(data);
 
     return (
-    <Block id="roleSelect" className="px-6 bg-neutral-300 overflow-y-auto rounded-none overflow-auto">
+    <Block id="roleSelect" className="p-6 bg-neutral-300 overflow-y-auto rounded-none overflow-auto">
         <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {roleList.townsfolk.map((role) =>
                 <SelectRoleButton key={role.role_name} role={role} handleClick={handleButton} selected={roles.includes(role)}/>
