@@ -20,14 +20,16 @@ export function SelectRoleButton({role, handleClick, selected, className, classN
     return (
         <button onClick={() => handleClick(role)}>
             {selected ?
-                (<div className={"p-4 rounded-2xl hover:scale-105 ease-in-out delay-100 duration-300 " + classNameSelected ?? ""}>
+                (<div className={"align-middle p-1 h-12 lg:h-36 rounded-2xl hover:scale-105 ease-in-out delay-100 duration-300 " + classNameSelected ?? ""}>
                     <></>
                     <h6>{role.role_name}</h6>
+                    <p className="text-sm visible max-lg:hidden">{role.description}</p>
                 </div>)
                 :
-                <div className={"p-4 rounded-2xl bg-white hover:bg-neutral-200 hover:scale-105 ease-in-out delay-100 duration-300 " + className ?? ""}>
+                <div className={"align-middle p-1 h-12 lg:h-36 rounded-2xl bg-white hover:bg-neutral-200 hover:scale-105 ease-in-out delay-100 duration-300 " + className ?? ""}>
                     <></>
                     <h6>{role.role_name}</h6>
+                    <p className="text-sm visible max-lg:hidden ">{role.description}</p>
                 </div>
             }
         </button>
