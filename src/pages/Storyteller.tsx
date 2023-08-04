@@ -21,7 +21,7 @@ export default function Storyteller () {
     const [loaded, setLoaded] = useState(false);
     const [messageHistory, setMessageHistory] = useState<WebsocketMessage[]>([]);
 
-    const {lastMessage, } = useWebSocket(SOCKET_URL);
+    const {lastMessage, readyState} = useWebSocket(SOCKET_URL);
 
     const navigate = useNavigate();
 
@@ -30,6 +30,11 @@ export default function Storyteller () {
     }
 
     useEffect(() => {
+
+        if(readyState === WebSocket.CLOSED){
+            console.log("Websocket disconnected")
+            navigate("/")
+        }
 
         if(!loaded) {
             setLoaded(true);
