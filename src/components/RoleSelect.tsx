@@ -1,9 +1,9 @@
 import Block from "./Block.tsx";
 import useSWRImmutable from "swr/immutable";
 import fetcher from "../http/fetcher.ts";
-import {separateRoles} from "../lib/gameCommons/gameAndPlayerUtilities.ts";
+import {numRole, separateRoles} from "../lib/gameCommons/gameAndPlayerUtilities.ts";
 import {useEffect, useState} from "react";
-import {Role} from "../lib/types.ts";
+import {Role, RoleType} from "../lib/types.ts";
 import {useAtom} from "jotai";
 import {gameStateAtom} from "../stores/atom.ts";
 
@@ -11,19 +11,21 @@ interface SelectRoleButtonProps {
     role: Role,
     handleClick: (arg0: Role) => void
     selected: boolean
+    className?: string
+    classNameSelected?: string
 }
 
-export function SelectRoleButton({role, handleClick, selected}: SelectRoleButtonProps){
+export function SelectRoleButton({role, handleClick, selected, className, classNameSelected}: SelectRoleButtonProps){
 
     return (
         <button onClick={() => handleClick(role)}>
             {selected ?
-                (<div className={"p-4 rounded-2xl bg-blue-400"}>
+                (<div className={"p-4 rounded-2xl hover:scale-105 ease-in-out delay-100 duration-300 " + classNameSelected ?? ""}>
                     <></>
                     <h6>{role.role_name}</h6>
                 </div>)
                 :
-                <div className={"p-4 rounded-2xl bg-white"}>
+                <div className={"p-4 rounded-2xl bg-white hover:bg-neutral-200 hover:scale-105 ease-in-out delay-100 duration-300 " + className ?? ""}>
                     <></>
                     <h6>{role.role_name}</h6>
                 </div>
@@ -73,32 +75,46 @@ export default function RoleSelect () {
                 newRoles = newRoles.slice(-gameState.maxPlayers)
             }
         }
-
-        // console.log(newRoles)
         setRoles(newRoles)
     }
 
     const roleList = separateRoles(data);
 
     return (
-    <Block id="roleSelect" className="p-6 bg-neutral-300 overflow-y-auto rounded-none overflow-auto">
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <Block id="roleSelect" className="px-6 bg-neutral-300 overflow-y-auto rounded-none overflow-auto">
+        <h2 className="mt-4 text-3xl">Trouble Brewing</h2>
+        <hr className="border border-black"/>
+        <h4>Welcome, Storyteller, to Ravenswood Bluff!</h4>
+        <p className="font-normal">Select roles to play with (roll over for description)</p>
+        <hr className="border border-black"/>
+        <h3 className="mb-2">Townsfolk ({roles.filter(r => r.team == RoleType.TOWNSFOLK).length}/{numRole(gameState.maxPlayers, RoleType.TOWNSFOLK)})
+        </h3>
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2 mb-4">
             {roleList.townsfolk.map((role) =>
-                <SelectRoleButton key={role.role_name} role={role} handleClick={handleButton} selected={roles.includes(role)}/>
+                <SelectRoleButton key={role.role_name} role={role} handleClick={handleButton} selected={roles.includes(role)} classNameSelected={"bg-blue-400"}/>
             )}
         </div>
-        <hr/>
-        {roleList.outsiders.map((role) =>
-            <SelectRoleButton key={role.role_name} role={role} handleClick={handleButton} selected={roles.includes(role)}/>
-        )}
-        <hr/>
-        {roleList.minions.map((role) =>
-            <SelectRoleButton key={role.role_name} role={role} handleClick={handleButton} selected={roles.includes(role)}/>
-        )}
-        <hr/>
-        {roleList.demons.map((role) =>
-            <SelectRoleButton key={role.role_name} role={role} handleClick={handleButton} selected={roles.includes(role)}/>
-        )}
+        <hr className="border border-black"/>
+        <h3 className="mb-2">Outsiders ({roles.filter(r => r.team == RoleType.OUTSIDER).length}/{numRole(gameState.maxPlayers, RoleType.OUTSIDER)})</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2 mb-4">
+            {roleList.outsiders.map((role) =>
+            <SelectRoleButton key={role.role_name} role={role} handleClick={handleButton} selected={roles.includes(role)} classNameSelected={"bg-blue-400"}/>
+            )}
+        </div>
+        <hr className="border border-black"/>
+        <h3 className="mb-2">Minions ({roles.filter(r => r.team == RoleType.MINION).length}/{numRole(gameState.maxPlayers, RoleType.MINION)})</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2 mb-4">
+            {roleList.minions.map((role) =>
+                <SelectRoleButton key={role.role_name} role={role} handleClick={handleButton} selected={roles.includes(role)} classNameSelected={"bg-red-400"}/>
+            )}
+        </div>
+        <hr className="border border-black"/>
+        <h3 className="mb-2">Demons ({roles.filter(r => r.team == RoleType.DEMON).length}/{numRole(gameState.maxPlayers, RoleType.DEMON)})</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2 mb-4">
+            {roleList.demons.map((role) =>
+                <SelectRoleButton key={role.role_name} role={role} handleClick={handleButton} selected={roles.includes(role)} classNameSelected={"bg-red-400"}/>
+            )}
+        </div>
     </Block>
     )
 
