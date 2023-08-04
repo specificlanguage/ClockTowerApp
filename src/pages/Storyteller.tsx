@@ -8,6 +8,7 @@ import {getAndAddPlayer, removePlayer, updatePlayers} from "../lib/gameCommons/m
 import LobbyInfo from "../components/LobbyInfo.tsx";
 import {useNavigate} from "react-router-dom";
 import RoleSelect from "../components/RoleSelect.tsx";
+import {WebsocketMessage} from "../lib/types.ts";
 
 
 export default function Storyteller () {
@@ -18,7 +19,7 @@ export default function Storyteller () {
     const SOCKET_URL =`${import.meta.env.VITE_WEBSOCKET_URL}/game/${gameID}?name=${name}&uuid=${localStorage.getItem("uuid")}`
 
     const [loaded, setLoaded] = useState(false);
-    const [messageHistory, setMessageHistory] = useState<string[]>([]);
+    const [messageHistory, setMessageHistory] = useState<WebsocketMessage[]>([]);
 
     const {lastMessage, } = useWebSocket(SOCKET_URL);
 
@@ -41,7 +42,10 @@ export default function Storyteller () {
 
         if(lastMessage !== null){
             const parsedMsg = JSON.parse(lastMessage.data);
-            setMessageHistory((prevState) => prevState.concat(lastMessage.data))
+            setMessageHistory((prevState) => prevState.concat(
+                {
+                    ...parsedMsg, time: new Date()
+                }))
 
             if(parsedMsg.type == MessageType.GAME_INFO){
                 const players = updatePlayers(parsedMsg.message);
@@ -69,7 +73,7 @@ export default function Storyteller () {
         <div className="grid gap-4 grid-cols-2 grid-rows-1 h-full">
             <RoleSelect/>
             <div className="grid gap-4 grid-rows-2 grid-cols-1">
-                <LobbyInfo messageHistory={messageHistory} gameState={gameState}/>
+                <LobbyInfo messageHistory={messageHistory}/>
                 <PlayerList players={gameState.players}/>
             </div>
         </div>

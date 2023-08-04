@@ -1,4 +1,4 @@
-import {GamePhase} from "./gameConsts.ts";
+import {GamePhase, MessageType} from "./gameConsts.ts";
 
 export enum RoleType {
     TOWNSFOLK,
@@ -37,6 +37,8 @@ export interface Role {
 }
 
 export interface WebsocketMessage {
+    time: Date,
+    type: MessageType,
     [id: string]: any
 }
 

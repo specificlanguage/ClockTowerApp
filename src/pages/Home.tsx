@@ -1,8 +1,13 @@
 import {useEffect} from 'react'
 import '../App.css'
 import JoinMenu from "../components/JoinMenu.tsx";
+import {useAtom} from "jotai";
+import {gameStateAtom} from "../stores/atom.ts";
+import {RESET} from "jotai/utils";
 
 export default function Home() {
+
+    const [, setGameState] = useAtom(gameStateAtom)
 
     // Please note this is generally insecure, we don't need an account system right now
     // and just need to check for unique clients.
@@ -12,6 +17,7 @@ export default function Home() {
             const UUID = crypto.randomUUID()
             localStorage.setItem("uuid", UUID);
         }
+        setGameState(RESET)
     });
 
     return (
