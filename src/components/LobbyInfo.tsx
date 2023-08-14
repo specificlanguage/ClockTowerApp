@@ -8,9 +8,10 @@ import {gameStateAtom} from "../stores/atom.ts";
 
 export interface LobbyInfoProps {
     messageHistory: WebsocketMessage[]
+    disablePlayerChange: boolean
 }
 
-export default function LobbyInfo({messageHistory}: LobbyInfoProps) {
+export default function LobbyInfo({messageHistory, disablePlayerChange}: LobbyInfoProps) {
 
     const [gameState, setGameState] = useAtom(gameStateAtom);
     const [openModal, setOpenModal] = useState(false);
@@ -33,7 +34,7 @@ export default function LobbyInfo({messageHistory}: LobbyInfoProps) {
                 <h5 className="mt-5">Join with code: {gameState.code}</h5>
                 <div className="mt-2">
                     <Label htmlFor="numPlayers" value="Number of Players"/>
-                    <Select id="numplayers" className="w-20" value={numPlayers} onChange={numPlayerChange}>
+                    <Select id="numplayers" className="w-20" value={numPlayers} onChange={numPlayerChange} disabled={disablePlayerChange}>
                         {range(Math.max(gameState.players.length, 5), 16).map((n) => (
                             <option value={n}>{n}</option>
                         ))}

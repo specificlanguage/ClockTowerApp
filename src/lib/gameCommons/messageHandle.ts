@@ -26,9 +26,15 @@ export function updatePlayers(message: WebsocketMessage) {
  */
 export function getAndAddPlayer(message: WebsocketMessage, players: Player[]){
     const newPlayers = [...players]
-    newPlayers.push({name: message.name, uuid: message.uuid,
+    // Don't update if it already exists
+    if (players.filter((pl) => pl.uuid == message.uuid).length >= 1){
+        newPlayers.filter((pl) => pl.uuid == message.uuid)[0].name = message.name;
+        return newPlayers;
+    } else {
+        newPlayers.push({name: message.name, uuid: message.uuid,
             ...(message.isStoryteller && {isStoryteller: message.isStoryteller})})
-    return newPlayers;
+        return newPlayers;
+    }
 }
 
 /**

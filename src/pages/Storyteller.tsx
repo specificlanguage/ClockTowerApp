@@ -9,6 +9,7 @@ import LobbyInfo from "../components/LobbyInfo.tsx";
 import {useNavigate} from "react-router-dom";
 import RoleSelect from "../components/RoleSelect.tsx";
 import {WebsocketMessage} from "../lib/types.ts";
+import {getStorytellerInfo} from "../lib/gameCommons/gameAndPlayerUtilities.ts";
 
 
 export default function Storyteller () {
@@ -72,13 +73,18 @@ export default function Storyteller () {
                 })
             }
         }
+
+        if(getStorytellerInfo(gameState)?.uuid != localStorage.getItem("uuid")){
+            navigate("/game")
+        }
+
     }, [lastMessage]);
 
     return (
         <div className="grid gap-4 grid-cols-2 grid-rows-1 h-full">
             <RoleSelect/>
             <div className="grid gap-4 grid-rows-2 grid-cols-1">
-                <LobbyInfo messageHistory={messageHistory}/>
+                <LobbyInfo messageHistory={messageHistory} disablePlayerChange={false}/>
                 <PlayerList players={gameState.players}/>
             </div>
         </div>
