@@ -41,7 +41,7 @@ function JoinGameForm () {
     function joinGame (event: Event) {
         event.preventDefault();
         setLoading(true);
-        console.log(name, code);
+        // console.log(name, code);
         setNameAtom(name)
         setCodeAtom(code)
         navigate("/game/")
@@ -85,7 +85,7 @@ function CreateGameForm() {
             method: "POST",
             body: JSON.stringify({scriptID: "trouble_brewing"})
         }).then(async (r) => {
-            console.log(r)
+            // console.log(r)
             setCodeAtom(r.code)
             setNameAtom(name)
             navigate("/storyteller")

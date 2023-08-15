@@ -21,7 +21,7 @@ export default function Game () {
     const [loaded, setLoaded] = useState(false);
     const [messageHistory, setMessageHistory] = useState<WebsocketMessage[]>([]);
 
-    const {lastMessage, readyState, sendJsonMessage} = useWebSocket(SOCKET_URL);
+    const {lastMessage, readyState,} = useWebSocket(SOCKET_URL);
 
     const navigate = useNavigate();
 

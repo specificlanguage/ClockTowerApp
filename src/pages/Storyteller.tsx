@@ -22,7 +22,7 @@ export default function Storyteller () {
     const [loaded, setLoaded] = useState(false);
     const [messageHistory, setMessageHistory] = useState<WebsocketMessage[]>([]);
 
-    const {lastMessage, readyState} = useWebSocket(SOCKET_URL);
+    const {lastMessage, readyState, sendMessage} = useWebSocket(SOCKET_URL);
 
     const navigate = useNavigate();
 
@@ -82,7 +82,7 @@ export default function Storyteller () {
 
     return (
         <div className="grid gap-4 grid-cols-2 grid-rows-1 h-full">
-            <RoleSelect/>
+            <RoleSelect sendMessage={sendMessage}/>
             <div className="grid gap-4 grid-rows-2 grid-cols-1">
                 <LobbyInfo messageHistory={messageHistory} disablePlayerChange={false}/>
                 <PlayerList players={gameState.players}/>

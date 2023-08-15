@@ -2,10 +2,12 @@ import Block from "./Block.tsx";
 import useSWRImmutable from "swr/immutable";
 import fetcher from "../http/fetcher.ts";
 import {numRole, separateRoles} from "../lib/gameCommons/gameAndPlayerUtilities.ts";
-import {useEffect, useState} from "react";
+import {FormEvent, useEffect, useState} from "react";
 import {Role, RoleType} from "../lib/types.ts";
 import {useAtom} from "jotai";
 import {gameStateAtom} from "../stores/atom.ts";
+import {SendMessage} from "react-use-websocket";
+import {Button, Spinner} from "flowbite-react";
 
 interface SelectRoleButtonProps {
     role: Role,
@@ -36,12 +38,15 @@ export function SelectRoleButton({role, handleClick, selected, className, classN
     )
 }
 
-export default function RoleSelect () {
+interface RoleSelectProps {
+    sendMessage: SendMessage
+}
+
+export default function RoleSelect ({sendMessage}: RoleSelectProps) {
 
     const { data, error, isLoading } = useSWRImmutable('/script?scriptID=trouble_brewing', fetcher)
-    const [roles, setRoles] = useState<Role[]>(
-        []
-    )
+    const [roles, setRoles] = useState<Role[]>([])
+    const [loading, setLoading] = useState(false);
     const [gameState] = useAtom(gameStateAtom);
 
     useEffect(() => {
@@ -80,6 +85,19 @@ export default function RoleSelect () {
         setRoles(newRoles)
     }
 
+    function selectRoles(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        setLoading(true);
+        const roleNames = roles.map((r) => r.role_name);
+        sendMessage(JSON.stringify({
+            type: "GAME_SETUP",
+            message: {
+                numPlayers: roleNames.length,
+                roles: roleNames,
+            }
+        }));
+    }
+
     const roleList = separateRoles(data);
 
     return (
@@ -116,6 +134,11 @@ export default function RoleSelect () {
             {roleList.demons.map((role) =>
                 <SelectRoleButton key={role.role_name} role={role} handleClick={handleButton} selected={roles.includes(role)} classNameSelected={"bg-red-400"}/>
             )}
+        </div>
+        <div className="flex justify-center mb-4">
+            <Button type="submit" className="bg-green-700 hover:bg-green-500" onClick={selectRoles}>
+                {loading ? <Spinner/> : <>Create Game</>}
+            </Button>
         </div>
     </Block>
     )

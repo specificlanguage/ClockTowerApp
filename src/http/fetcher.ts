@@ -26,5 +26,5 @@ function updateOptions(options: RequestInit) {
  * @param options - Additional HTTP options
  */
 export default async function fetcher(path: string, options?: RequestInit) {
-    return fetch(import.meta.env.VITE_BACKEND_URL + path, updateOptions(options ?? {})).then(res => res.json())
+    return fetch(import.meta.env.VITE_BACKEND_URL + path, updateOptions(options ?? {})).then(res => res.json()).catch((reason) => console.log("failed request:", reason))
 }
