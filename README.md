@@ -4,6 +4,8 @@ This is the backend for a (incredibly still in progress!) version of the game [B
 
 **This should not be used to play a game,** it's still very much under construction.
 
+To try to play the game, use `pnpm dev`, or your favorite package manager.
+
 This repository is the frontend setup written in React for the game, which shows the game state to the client. It's incredibly barebones but it will include:
 - Separate screens for players and storytellers
 - Buttons and working modules for use during play
