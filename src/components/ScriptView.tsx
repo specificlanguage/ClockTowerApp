@@ -34,8 +34,6 @@ export default function ScriptView() {
         minions: Role[] = [],
         demons: Role[] = []
 
-    console.log(data)
-
     const roles: Role[] = data.roles
     roles.map((role: Role) => {
         switch (role.team){

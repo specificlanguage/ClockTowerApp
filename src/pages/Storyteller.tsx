@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import useWebSocket from "react-use-websocket";
 import PlayerList from "../components/PlayerList.tsx";
 import {GamePhase, MessageType} from "../lib/gameConsts.ts";
-import {getAndAddPlayer, removePlayer, updatePlayers} from "../lib/gameCommons/messageHandle.ts";
+import {getAndAddPlayer, removePlayer, updatePlayers, updateRoles} from "../lib/gameCommons/messageHandle.ts";
 import LobbyInfo from "../components/LobbyInfo.tsx";
 import {useNavigate} from "react-router-dom";
 import RoleSelect from "../components/RoleSelect.tsx";
@@ -66,11 +66,9 @@ export default function Storyteller () {
                     players
                 })
             } else if (parsedMsg.type == MessageType.CLIENT_DISCONNECT){
-                const players = removePlayer(parsedMsg.message, gameState.players)
-                setGameState({
-                    ...gameState,
-                    players
-                })
+                removePlayer(parsedMsg.message, gameState.players)
+            } else if (parsedMsg.type == MessageType.GAME_SETUP){
+                updateRoles(parsedMsg.message, gameState.players)
             }
         }
 

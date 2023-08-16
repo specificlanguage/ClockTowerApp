@@ -45,3 +45,14 @@ export function getAndAddPlayer(message: WebsocketMessage, players: Player[]){
 export function removePlayer(message: WebsocketMessage, players: Player[]){
     return players.filter(pl => pl.uuid != message.uuid)
 }
+
+interface RoleObject {
+    uuid: string,
+    role: string
+}
+
+export function updateRoles(message: WebsocketMessage, players: Player[]){
+    message.roles.map((obj: RoleObject) => {
+        players.filter((pl) => pl.uuid == obj.uuid)[0].role = obj.role;
+    })
+}

@@ -53,11 +53,7 @@ export default function Game () {
                 }))
 
             if(parsedMsg.type == MessageType.GAME_INFO){
-                const players = updatePlayers(parsedMsg.message);
-                setGameState({
-                    ...gameState,
-                    ...players
-                })
+                updatePlayers(parsedMsg.message);
             } else if (parsedMsg.type == MessageType.CLIENT_JOIN){
                 const players = getAndAddPlayer(parsedMsg.message, gameState.players)
                 setGameState({
@@ -65,10 +61,12 @@ export default function Game () {
                     players
                 })
             } else if (parsedMsg.type == MessageType.CLIENT_DISCONNECT){
-                const players = removePlayer(parsedMsg.message, gameState.players)
+                removePlayer(parsedMsg.message, gameState.players)
+            } else if (parsedMsg.type == MessageType.GAME_SETUP){
                 setGameState({
                     ...gameState,
-                    players
+                    role: parsedMsg.message.role,
+                    maxPlayers: parsedMsg.message.numPlayers
                 })
             }
         }

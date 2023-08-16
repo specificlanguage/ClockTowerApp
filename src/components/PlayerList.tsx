@@ -18,13 +18,14 @@ export default function PlayerList ({players}: PlayerListProps) {
             <div className="overflow-auto">
             {players.map((player) => {
                 return (
-                    <div key={player.name} className="m-2 p-2 border border-black rounded-2xl mx-2 bg-neutral-50 h-[80px]">
+                    <div key={player.uuid} className="m-2 p-2 border border-black rounded-2xl mx-2 bg-neutral-50 h-[80px]">
                         <div className="float-left align-middle">
                             <PlayerIcon name={player.name} key={player.name} imageURL={player.imageURL ?? Default} size={60}/>
                         </div>
                         <div className="ml-4 inline-block">
                             <h3>{player.name}</h3>
                             {player.isStoryteller && <h4 className="block pb-2 text-yellow-500">Storyteller</h4>}
+                            {player.role != undefined && <h4 className="block pb-2 text-neutral-500">{player.role}</h4>}
                         </div>
                     </div>)
             })}

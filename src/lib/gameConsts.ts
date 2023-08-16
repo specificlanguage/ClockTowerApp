@@ -17,4 +17,5 @@ export enum MessageType {
     CLIENT_DISCONNECT = "CLIENT_DISCONNECT",
     ERROR             = "ERROR",
     GAME_INFO         = "GAME_INFO",
+    GAME_SETUP        = "GAME_SETUP"
 }

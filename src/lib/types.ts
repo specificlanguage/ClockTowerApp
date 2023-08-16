@@ -48,4 +48,5 @@ export interface GameState {
     code: string,
     script: string,
     maxPlayers: number,
+    role: Role
 }
