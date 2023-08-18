@@ -96,3 +96,10 @@ export function removeRoleFromList(roles: Role[], role: Role): Role[]{
     return roleCopy
 }
 
+/**
+ * Function that determines if client is storyteller
+ */
+export function isStoryteller(gameState: GameState) {
+    return gameState.players.filter(pl => pl.uuid == localStorage.getItem("uuid") && pl.isStoryteller).length == 1
+}
+

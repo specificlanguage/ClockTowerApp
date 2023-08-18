@@ -5,8 +5,8 @@ import {useEffect, useState} from "react";
 import useWebSocket from "react-use-websocket";
 import {WebsocketMessage} from "../lib/types.ts";
 import {useNavigate} from "react-router-dom";
-import {GamePhase, MessageType} from "../lib/gameConsts.ts";
-import {getAndAddPlayer, removePlayer, updatePlayers} from "../lib/gameCommons/messageHandle.ts";
+import {GamePhase} from "../lib/gameConsts.ts";
+import {parseMessage} from "../lib/gameCommons/messageHandle.ts";
 import LobbyInfo from "../components/LobbyInfo.tsx";
 import PlayerList from "../components/PlayerList.tsx";
 import {getStorytellerInfo} from "../lib/gameCommons/gameAndPlayerUtilities.ts";
@@ -21,7 +21,11 @@ export default function Game () {
     const [loaded, setLoaded] = useState(false);
     const [messageHistory, setMessageHistory] = useState<WebsocketMessage[]>([]);
 
-    const {lastMessage, readyState,} = useWebSocket(SOCKET_URL);
+    const {lastMessage, readyState,} = useWebSocket(SOCKET_URL, {
+        shouldReconnect: () => {
+            return !(gameID == "" || name == "" || localStorage.getItem("uuid") == "");
+        }
+    });
 
     const navigate = useNavigate();
 
@@ -31,8 +35,8 @@ export default function Game () {
 
     useEffect(() => {
 
-        if(readyState === WebSocket.CLOSED){
-            console.log("Websocket disconnected")
+        // Check if we should reconnect
+        if(readyState === WebSocket.CLOSED && (gameID == "" || name == "" || localStorage.getItem("uuid") == "" )){
             navigate("/")
         }
 
@@ -45,31 +49,7 @@ export default function Game () {
             })
         }
 
-        if(lastMessage !== null){
-            const parsedMsg = JSON.parse(lastMessage.data);
-            setMessageHistory((prevState) => prevState.concat(
-                {
-                    ...parsedMsg, time: new Date()
-                }))
-
-            if(parsedMsg.type == MessageType.GAME_INFO){
-                updatePlayers(parsedMsg.message);
-            } else if (parsedMsg.type == MessageType.CLIENT_JOIN){
-                const players = getAndAddPlayer(parsedMsg.message, gameState.players)
-                setGameState({
-                    ...gameState,
-                    players
-                })
-            } else if (parsedMsg.type == MessageType.CLIENT_DISCONNECT){
-                removePlayer(parsedMsg.message, gameState.players)
-            } else if (parsedMsg.type == MessageType.GAME_SETUP){
-                setGameState({
-                    ...gameState,
-                    role: parsedMsg.message.role,
-                    maxPlayers: parsedMsg.message.numPlayers
-                })
-            }
-        }
+        parseMessage(lastMessage, gameState, setGameState, setMessageHistory);
 
     }, [lastMessage]);
 

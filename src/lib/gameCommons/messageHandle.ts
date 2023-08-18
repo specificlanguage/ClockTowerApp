@@ -1,4 +1,6 @@
-import {Player, WebsocketMessage} from "../types.ts";
+import {GameState, Player, WebsocketMessage} from "../types.ts";
+import {MessageType} from "../gameConsts.ts";
+import {isStoryteller} from "./gameAndPlayerUtilities.ts";
 
 /**
  * updatePlayers - Translates the websocket message to a partial update for a GameState.
@@ -51,8 +53,58 @@ interface RoleObject {
     role: string
 }
 
+/**
+ * Updates the roles for all players from the Websocket message
+ * @param message - The RoleObject with numPlayers, roles of all players
+ * @param players - The players list
+ */
 export function updateRoles(message: WebsocketMessage, players: Player[]){
     message.roles.map((obj: RoleObject) => {
         players.filter((pl) => pl.uuid == obj.uuid)[0].role = obj.role;
     })
+}
+
+/**
+ * Does all the heavy lifting for parsing a Websocket Message and then doing each appropriate action.
+ * @param message - Websocket message
+ * @param gameState - GameState of the game
+ * @param setGameState - A function that sets that gameState
+ * @param updateMessageHistory - Optional function to update message history as well.
+ */
+export function parseMessage(message: MessageEvent<any> | null,
+                             gameState: GameState,
+                             setGameState: (state: GameState) => void,
+                             updateMessageHistory?: (msg: any) => void) {
+    if(message == null){
+        return;
+    }
+
+    const parsedMsg = JSON.parse(message.data);
+    if(updateMessageHistory != undefined) {
+        updateMessageHistory(parsedMsg);
+    }
+
+    if(parsedMsg.type == MessageType.GAME_INFO){
+        updatePlayers(parsedMsg.message);
+    } else if (parsedMsg.type == MessageType.CLIENT_JOIN){
+        const players = getAndAddPlayer(parsedMsg.message, gameState.players)
+        setGameState({
+            ...gameState,
+            players
+        })
+    } else if (parsedMsg.type == MessageType.CLIENT_DISCONNECT){
+        removePlayer(parsedMsg.message, gameState.players)
+    } else if (parsedMsg.type == MessageType.GAME_SETUP){
+        if(isStoryteller(gameState)) {
+            updateRoles(parsedMsg.message, gameState.players)
+        } else {
+            setGameState({
+                ...gameState,
+                role: parsedMsg.message.role,
+                maxPlayers: parsedMsg.message.numPlayers
+            })
+        }
+    } else if (parsedMsg.type == MessageType.ERROR) {
+        console.log(parsedMsg.message)
+    }
 }

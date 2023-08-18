@@ -64,7 +64,7 @@ export default function RoleSelect ({sendMessage}: RoleSelectProps) {
     } else if (error || !data) {
         return (
             <Block className="bg-neutral-300" id="script-error">
-                <h3 className="font-lato align-middle my-auto">Could not load script. Is the server down?</h3>
+                <h3 className="font-lato align-middle my-auto">Something went wrong when loading data.</h3>
             </Block>
         )
     }

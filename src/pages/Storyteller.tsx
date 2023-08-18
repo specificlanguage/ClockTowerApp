@@ -3,8 +3,8 @@ import {gameCodeAtom, gameStateAtom, nameAtom} from "../stores/atom.ts";
 import {useEffect, useState} from "react";
 import useWebSocket from "react-use-websocket";
 import PlayerList from "../components/PlayerList.tsx";
-import {GamePhase, MessageType} from "../lib/gameConsts.ts";
-import {getAndAddPlayer, removePlayer, updatePlayers, updateRoles} from "../lib/gameCommons/messageHandle.ts";
+import {GamePhase} from "../lib/gameConsts.ts";
+import {parseMessage} from "../lib/gameCommons/messageHandle.ts";
 import LobbyInfo from "../components/LobbyInfo.tsx";
 import {useNavigate} from "react-router-dom";
 import RoleSelect from "../components/RoleSelect.tsx";
@@ -22,8 +22,11 @@ export default function Storyteller () {
     const [loaded, setLoaded] = useState(false);
     const [messageHistory, setMessageHistory] = useState<WebsocketMessage[]>([]);
 
-    const {lastMessage, readyState, sendMessage} = useWebSocket(SOCKET_URL);
-
+    const {lastMessage, readyState, sendMessage} = useWebSocket(SOCKET_URL, {
+        shouldReconnect: () => {
+            return !(gameID == "" || name == "" || localStorage.getItem("uuid") == "");
+        }
+    });
     const navigate = useNavigate();
 
     if(gameID == "" || name == "" || localStorage.getItem("uuid") == null){
@@ -46,31 +49,7 @@ export default function Storyteller () {
             })
         }
 
-        if(lastMessage !== null){
-            const parsedMsg = JSON.parse(lastMessage.data);
-            setMessageHistory((prevState) => prevState.concat(
-                {
-                    ...parsedMsg, time: new Date()
-                }))
-
-            if(parsedMsg.type == MessageType.GAME_INFO){
-                const players = updatePlayers(parsedMsg.message);
-                setGameState({
-                    ...gameState,
-                    ...players
-                })
-            } else if (parsedMsg.type == MessageType.CLIENT_JOIN){
-                const players = getAndAddPlayer(parsedMsg.message, gameState.players)
-                setGameState({
-                    ...gameState,
-                    players
-                })
-            } else if (parsedMsg.type == MessageType.CLIENT_DISCONNECT){
-                removePlayer(parsedMsg.message, gameState.players)
-            } else if (parsedMsg.type == MessageType.GAME_SETUP){
-                updateRoles(parsedMsg.message, gameState.players)
-            }
-        }
+        parseMessage(lastMessage, gameState, setGameState, setMessageHistory);
 
         if(getStorytellerInfo(gameState)?.uuid != localStorage.getItem("uuid")){
             navigate("/game")

@@ -44,6 +44,10 @@ function JoinGameForm () {
         // console.log(name, code);
         setNameAtom(name)
         setCodeAtom(code)
+
+        // TODO: Check endpoint to see if you can connect to the game.
+        // Possibly could be cool to add a verifier here.
+
         navigate("/game/")
     }
 
@@ -72,6 +76,7 @@ function CreateGameForm() {
 
     const [loading, setLoading] = useState(false);
     const [name, setName] = useState("");
+    const [error, setError] = useState("");
 
     const setNameAtom = useSetAtom(nameAtom);
     const setCodeAtom = useSetAtom(gameCodeAtom);
@@ -85,10 +90,12 @@ function CreateGameForm() {
             method: "POST",
             body: JSON.stringify({scriptID: "trouble_brewing"})
         }).then(async (r) => {
-            // console.log(r)
             setCodeAtom(r.code)
             setNameAtom(name)
             navigate("/storyteller")
+        }).catch(() => {
+            setLoading(false);
+            setError("An error occurred when creating a game, try again later.")
         })
     }
 
@@ -113,7 +120,10 @@ function CreateGameForm() {
                 <TextInput id="name" placeholder={"Your name here"} required type="text"
                            value={name} onChange={e => setName(e.target.value)}/>
             </div>
-            <div className="mt-4 flex justify-center">
+            {error != "" && <p className="px-10 my-1 text-red-700 font-lato">
+                {error}
+            </p>}
+            <div className="flex justify-center">
                 <Button type="submit" className="bg-green-700 hover:bg-green-500" onClick={createGame}>
                     {loading ? <Spinner/> : <>Create Game</>}
                 </Button>
