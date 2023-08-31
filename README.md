@@ -4,6 +4,11 @@ This is the backend for a (incredibly still in progress!) version of the game [B
 
 **This should not be used to play a game,** it's still very much under construction.
 
+To try to play the game, 
+1. Create a `.env` file with variables as `VITE_BACKEND_URL=[your backend endpoint]`, `VITE_WEBSOCKET_URL=[same endpoint, but preceded with ws:// instead of http://`
+2. `pnpm install`, or your favorite package manager.
+3. `pnpm dev`
+
 This repository is the frontend setup written in React for the game, which shows the game state to the client. It's incredibly barebones but it will include:
 - Separate screens for players and storytellers
 - Buttons and working modules for use during play
